@@ -1,0 +1,39 @@
+import 'contract_nationality_model.dart';
+
+class MaritalStatusModel {
+  int id;
+  NameLang name;
+
+  MaritalStatusModel({required this.id, required this.name});
+}
+
+List<MaritalStatusModel> maritalList = [
+  MaritalStatusModel(
+    id: 1,
+    name: NameLang(
+      ar: 'عزباء',
+      en: 'Single',
+    ),
+  ),
+  MaritalStatusModel(
+    id: 2,
+    name: NameLang(
+      ar: 'متزوجه',
+      en: 'Married',
+    ),
+  ),
+  MaritalStatusModel(
+    id: 3,
+    name: NameLang(
+      ar: 'ارمله',
+      en: 'Widow',
+    ),
+  ),
+  MaritalStatusModel(
+    id: 4,
+    name: NameLang(
+      ar: 'مطلقه',
+      en: 'Divorced',
+    ),
+  ),
+];

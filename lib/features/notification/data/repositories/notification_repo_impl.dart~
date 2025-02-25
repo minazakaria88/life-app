@@ -1,0 +1,34 @@
+import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
+import 'package:life/core/api_helper/api_helper.dart';
+import 'package:life/core/api_helper/end_points.dart';
+import 'package:life/core/api_helper/failure.dart';
+import 'package:life/features/notification/data/models/notification_model.dart';
+import 'package:life/features/notification/data/repositories/notification_repo.dart';
+
+class NotificationRepoImpl implements NotificationRepo
+{
+  final ApiHelper apiHelper;
+  NotificationRepoImpl({required this.apiHelper});
+  @override
+  Future<Either<Failure, List<NotificationModel>>> getNotification() async{
+    List<NotificationModel> notifications=[];
+   try
+       {
+         var response=await apiHelper.getData(url: ApiEndPoints.notification);
+         for(var data in response.data['data']['notifications'])
+           {
+             notifications.add(NotificationModel.fromJson(data));
+           }
+         return Right(notifications);
+       }catch(e)
+    {
+      if(e is DioException)
+        {
+          return Left(ServerFailure.serverError(e));
+        }
+      return Left(Failure(message: e.toString()));
+    }
+  }
+
+}

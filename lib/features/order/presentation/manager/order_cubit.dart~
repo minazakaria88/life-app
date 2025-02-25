@@ -1,0 +1,185 @@
+import 'package:bloc/bloc.dart';
+import 'package:life/features/nurse_data/data/models/nurse_data_model.dart';
+import 'package:life/features/order/data/models/branches_model.dart';
+import 'package:life/features/order/data/models/cities_model.dart';
+import 'package:life/features/order/data/models/package_model.dart';
+import 'package:life/features/order/data/repositories/order_repo.dart';
+import '../../../locations/data/models/location_model.dart';
+import 'order_state.dart';
+
+class OrderCubit extends Cubit<OrderState> {
+  OrderCubit({required this.orderRepo}) : super(OrderInitial());
+  final OrderRepo orderRepo;
+
+  CitiesModel? citiesModel;
+  NurseDataModel? nurseDataModel;
+
+  @override
+  void emit(OrderState state) {
+    if (!isClosed) {
+      super.emit(state);
+    }
+  }
+
+
+
+  Future<void> getCities() async {
+    emit(GetCitiesLoadingState());
+    var result = await orderRepo.getCities();
+    result.fold(
+      (f) {
+        emit(
+          GetCitiesFailureState(
+            message: f.message,
+          ),
+        );
+        throw Exception(f.message);
+      },
+      (r) {
+        citiesModel = r;
+        emit(GetCitiesSuccessState());
+      },
+    );
+  }
+
+  BranchesModel? branchesModel;
+  Future<void> getBranches() async {
+    emit(GetBranchesLoadingState());
+    var result = await orderRepo.getBranches();
+    result.fold(
+      (f) {
+        emit(
+          GetBranchesFailureState(
+            message: f.message,
+          ),
+        );
+        throw Exception(f.message);
+      },
+      (r) {
+        branchesModel = r;
+        emit(GetBranchesSuccessState());
+      },
+    );
+  }
+
+  Locations? locationsModel;
+
+  Future<void> getLocations() async {
+    emit(GetLocationsLoadingState());
+    var result = await orderRepo.getLocations();
+    result.fold(
+      (f) {
+        emit(
+          GetLocationsFailureState(
+            message: f.message,
+          ),
+        );
+        throw Exception(f.message);
+      },
+      (r) {
+        locationsModel = r;
+        emit(GetLocationsSuccessState());
+      },
+    );
+  }
+
+  Packages? packagesModel;
+  Future<void> getPackages({required int id}) async {
+    emit(GetPackagesLoadingState());
+    var result = await orderRepo.getPackages(id: id);
+    result.fold(
+      (f) => emit(
+        GetPackagesFailureState(
+          message: f.message,
+        ),
+      ),
+      (r) {
+        packagesModel = r;
+      },
+    );
+  }
+
+  int currentStep = 0;
+  void changeStep(
+    int index, {
+    required String cityError,
+    required String branchError,
+    required String locationError,
+        required String packageError
+  })
+  {
+    if (currentStep == 0) {
+      if(index>currentStep)
+      {
+        if (selectedCityId == 0) {
+          emit(GetCitiesFailureState(message: cityError));
+          return;
+        }
+
+       else if (selectedLocationId == 0) {
+          emit(GetLocationsFailureState(message: locationError));
+          return;
+        }
+        else if (selectedBranchId == 0) {
+          emit(GetBranchesFailureState(message: branchError));
+          return;
+        }
+      }
+    }
+    if (currentStep == 1) {
+      if(index>currentStep)
+      {
+        if (selectedPackageId == 0) {
+          emit(GetPackagesFailureState(message: packageError));
+          return;
+        }
+      }
+    }
+    if (index >= 0 && index < 4) {
+      currentStep = index;
+    }
+    emit(ChangeStepState());
+  }
+
+
+
+  bool getData = false;
+  void getAllData({required int id}) async {
+    emit(GetAllDataLoadingState());
+    try {
+      await Future.wait(
+        [
+          getCities(),
+          getBranches(),
+          getLocations(),
+          getPackages(id: id),
+        ],
+      );
+      getData = true;
+      emit(GetAllDataSuccessState());
+    } catch (e) {
+      emit(GetAllDataFailureState(message: e.toString()));
+    }
+  }
+
+  PackagesData? packagesData;
+  void setPackageId(int id, int index) {
+    selectedPackageId = id;
+    packagesData = packagesModel!.data[index];
+    //emit(GetPackagesSuccessState());
+  }
+
+  void makeOrder(Map<String, dynamic> data) async {
+    // emit(MakeOrderLoadingState());
+    // var result = await orderRepo.makeOrder(data);
+    // result.fold((f) => emit(MakeOrderFailureState(message: f.message)), (r) {
+    //   emit(MakeOrderSuccessState());
+    // });
+    emit(MakeOrderSuccessState());
+  }
+
+  int selectedCityId = 0;
+  int selectedBranchId = 0;
+  int selectedLocationId = 0;
+  int selectedPackageId = 0;
+}

@@ -1,0 +1,33 @@
+import 'contract_nationality_model.dart';
+
+class AgeRangeModel {
+  int id;
+  NameLang name;
+
+  AgeRangeModel({required this.id, required this.name});
+}
+
+
+List<AgeRangeModel> ages = [
+  AgeRangeModel(
+    id: 1,
+    name: NameLang(
+      ar: 'من 18 الى 25',
+      en: 'From 18 to 25',
+    ),
+  ),
+  AgeRangeModel(
+    id: 2,
+    name: NameLang(
+      ar: 'من 26 الى 35',
+      en: 'From 26 to 35',
+    ),
+  ),
+  AgeRangeModel(
+    id: 3,
+    name: NameLang(
+      ar: 'اكبر من 36',
+      en: 'More than 36',
+    ),
+  ),
+];

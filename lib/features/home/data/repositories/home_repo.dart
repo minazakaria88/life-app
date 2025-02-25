@@ -1,0 +1,11 @@
+import 'package:dartz/dartz.dart';
+import 'package:life/core/api_helper/failure.dart';
+import 'package:life/features/home/data/models/contract_nationality_model.dart';
+import 'package:life/features/nurse_data/data/models/contract_model.dart';
+import 'package:life/features/nurse_data/data/models/nurse_data_model.dart';
+
+abstract class HomeRepo {
+  Future<Either<Failure,List<ContractNationalityModel>>> getContractNationality();
+  Future<Either<Failure,Contracts>> getContracts();
+  Future<Either<Failure,NurseModel>> getFilterNurseData({required Map<String, dynamic> query});
+}

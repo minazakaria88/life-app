@@ -1,0 +1,23 @@
+import 'package:life/features/home/data/models/contract_nationality_model.dart';
+
+class NationalityDataModel
+{
+  late final int id;
+  late final  NameLang name;
+  
+  NationalityDataModel({
+    required this.id,
+    required this.name,
+  });
+  
+  NationalityDataModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = NameLang.fromJson(json['name']);
+  }
+}
+
+List<NationalityDataModel> nationalityList = [
+  NationalityDataModel(id: 1, name: NameLang(ar: 'بخبرة', en: 'With experience')),
+  NationalityDataModel(id: 2, name: NameLang(ar: '', en: 'Without experience')),
+  
+];

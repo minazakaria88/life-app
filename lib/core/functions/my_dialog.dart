@@ -1,0 +1,48 @@
+import 'package:flutter/material.dart';
+import '../../generated/l10n.dart';
+Future<dynamic> showMyDialog({
+  required final BuildContext context,
+  required final String message,
+  required final String confirm,
+  required final Function  confirmAction,
+   final AlignmentGeometry ?alignment
+
+
+}) {
+  return showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      alignment:alignment,
+      title: Text(
+       message,
+        style: const TextStyle(
+          //color: Colors.white,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(
+            S.of(context).cancel,
+            style: const TextStyle(
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        TextButton(
+          onPressed: () async {
+          await  confirmAction();
+          },
+          child: Text(
+           confirm,
+            style: const TextStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}

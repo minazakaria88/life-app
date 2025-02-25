@@ -1,0 +1,61 @@
+import 'package:flutter/material.dart';
+import 'package:life/core/functions/get_language.dart';
+import 'package:life/core/helpers/extensions.dart';
+import 'package:life/features/order/presentation/widgets/package_card.dart';
+import 'package:life/generated/l10n.dart';
+import '../../../../core/utils/app_colors.dart';
+import '../manager/order_cubit.dart';
+
+class OrderPackageListview extends StatelessWidget {
+   const OrderPackageListview({
+    super.key,
+    required this.cubit,
+  });
+
+  final OrderCubit cubit;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.6,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            S.of(context).choose_your_package,
+            style: const TextStyle(
+              color: AppColors.primaryColor,
+            ),
+          ),
+          10.height,
+          cubit.packagesModel!.data.isNotEmpty?
+          Expanded(
+            child: ListView.builder(
+              itemCount: cubit.packagesModel!.data.length,
+              itemBuilder: (context, index) => PackageCard(
+                onTap: () {
+                  cubit.setPackageId(
+                      cubit.packagesModel!.data[index].id!, index);
+                },
+                isSelected: cubit.selectedPackageId ==
+                    cubit.packagesModel!.data[index].id,
+                title: getLanguage() == 'en'
+                    ? cubit.packagesModel!.data[index].name?.en??''
+                    : cubit.packagesModel!.data[index].name?.ar ??'',
+                duration: cubit.packagesModel!.data[index].duration??0,
+                price: cubit.packagesModel!.data[index].price??0,
+                tax: cubit.packagesModel!.data[index].tax??0,
+              ),
+            ),
+          ):Column(
+            children: [
+              50.height,
+              Text(S.of(context).there_are_no_packages),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+

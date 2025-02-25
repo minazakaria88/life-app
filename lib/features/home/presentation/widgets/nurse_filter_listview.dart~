@@ -1,0 +1,49 @@
+import 'package:flutter/material.dart';
+import 'package:life/core/helpers/extensions.dart';
+import 'package:life/features/home/presentation/manager/home_state.dart';
+import 'package:life/features/nurse_data/data/models/nurse_data_model.dart';
+
+import '../../../../core/functions/get_language.dart';
+import '../../../../core/routes/routes.dart';
+import '../../../../core/utils/app_colors.dart';
+import 'nurse_filter_list_view_item.dart';
+
+class NurseFilterListView extends StatelessWidget {
+  const NurseFilterListView({
+    super.key,
+    required this.nurseList,
+    required this.state,
+  });
+
+  final HomeState state;
+  final List<NurseDataModel> nurseList;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverList.builder(
+      itemCount: nurseList.length + 1,
+      itemBuilder: (context, index) => nurseList.length == index
+          ? state is GetFilterNursesLoadingState
+              ? const Center(
+                  child:
+                      CircularProgressIndicator(color: AppColors.primaryColor),
+                )
+              : const SizedBox()
+          : NurseFilterListViewItem(
+              id: index,
+              age: nurseList[index].age!,
+              image: nurseList[index].image!,
+              name: getLanguage() == 'ar'
+                  ? nurseList[index].name!.ar!
+                  : nurseList[index].name!.en!,
+              description: getLanguage() == 'ar'
+                  ? nurseList[index].description!.ar!
+                  : nurseList[index].description!.en!,
+              onTap: () {
+                context.pushNamed(Routes.nurseView,
+                    arguments: {'index': index, 'nurse': nurseList[index]});
+              },
+            ),
+    );
+  }
+}

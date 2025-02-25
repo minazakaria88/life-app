@@ -1,0 +1,37 @@
+import 'package:flutter/material.dart';
+import 'package:life/core/helpers/extensions.dart';
+
+import '../../../../../core/functions/get_language.dart';
+import '../../../../../core/routes/routes.dart';
+import '../../manager/home_cubit.dart';
+import 'contract_card.dart';
+
+class ExpiredContractListview extends StatelessWidget {
+  const ExpiredContractListview({
+    super.key,
+    required this.cubit,
+  });
+
+  final HomeCubit cubit;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemBuilder: (context, index) => ContractCard(
+        onTap: () {
+          context.pushNamed(
+              Routes.contractDetailsScreen,arguments: cubit.expiredContracts[index]);
+        },
+        title: getLanguage() == 'ar'
+            ? cubit.expiredContracts[index].package!
+            .name!.ar!
+            : cubit.expiredContracts[index].package!
+            .name!.en!,
+        duration: cubit
+            .expiredContracts[index].package!.duration!,
+        status: cubit.expiredContracts[index].status!,
+      ),
+      itemCount: cubit.expiredContracts.length,
+    );
+  }
+}

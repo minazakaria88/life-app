@@ -1,0 +1,4 @@
+abstract class SearchEvents {}
+
+
+class SearchChanged extends SearchEvents {}
